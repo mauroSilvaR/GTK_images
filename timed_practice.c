@@ -11,17 +11,47 @@
 
 // Variables to track the starting position and the initial scroll position
 static gboolean is_dragging = FALSE;
+static gboolean image_is_present = FALSE;
 static int start_x = 0, start_y = 0;
 static int initial_hadjustment = 0, initial_vadjustment = 0;
 
+//main label to be used in the top text
+GtkWidget *main_label;
 
-//handler for label text change, TODO: break this down to be a "print" like function instead of all this logic
+//funtion to print to a label
+// parameters*****
+//data the pointer to the label you want to print
+//char str[250] the string you want to print to that label
+static void print_to_main_label(GtkLabel *label, const gchar *new_text)
+{
+    // Set the label text
+    gtk_label_set_text(GTK_LABEL(label), new_text);
+}
+
+//function to check if an image was loaded
+// the function just checks if the widget is null or not, when an image widget is null that indicates no image is present
+// if no image is present after you attempted to load it that means that it wasnt loaded
+gboolean check_if_image_was_loaded(GtkImage *image)
+{
+    if(image == NULL)
+    {
+        image_is_present = FALSE;
+        return FALSE;
+    }
+    else
+    {
+        image_is_present = TRUE;
+        return TRUE;
+    }
+}
+
+//handler for label text change, TODO: break this down to be a perpetual loop, somewhat like
+// the update functions on frame change in game engines
 static gboolean update_label(gpointer data) 
 {
     static int counter = 0;
     int limit = 100;
     char str[250];
-
 
     counter++;
     if(counter>= limit)
@@ -29,21 +59,21 @@ static gboolean update_label(gpointer data)
         counter = 0;
     }
 
-    sprintf(str, "New Time: %d",counter);
-    GtkWidget *label = GTK_WIDGET(data);
 
-    // Set the label text
-    gtk_label_set_text(GTK_LABEL(label), str);
+    //only print to the top layer if the image was loaded
+    sprintf(str, "New Time: %d",counter);
+    print_to_main_label(data,str);
+
+
+
 
     // Return TRUE to continue the timeout
     return TRUE;
 }
 
-//hanler for right mouse button press events,  the exact button is also defined by the function
-static gboolean on_button_press(GtkWidget *widget, GdkEventButton *event, gpointer user_data) 
+//function to treat right mouse button events
+gboolean treat_right_mouse_button(gpointer user_data,GdkEventButton *event)
 {
-    if (event->button == RIGHT_MOUSE_BUTTON) 
-    {  
         is_dragging = TRUE;
         start_x = event->x;
         start_y = event->y;
@@ -53,10 +83,68 @@ static gboolean on_button_press(GtkWidget *widget, GdkEventButton *event, gpoint
 
         initial_hadjustment = gtk_adjustment_get_value(hadj);
         initial_vadjustment = gtk_adjustment_get_value(vadj);
+        return TRUE; // Event handled
+}
 
-        return TRUE;  // Event handled
+//handler for right mouse button press events,  the exact button is also defined by the function
+static gboolean on_button_press(GtkWidget *widget, GdkEventButton *event, gpointer user_data) 
+{
+    //variable to hold processing status of the on_button_press
+    char status;
+
+    switch(event->button)
+    {
+        case RIGHT_MOUSE_BUTTON:
+        {
+            //treat button, user wants to move image
+            status = treat_right_mouse_button(user_data,event);
+            break;
+        }
+        case LEFT_MOUSE_BUTTON:
+        {
+            //no function to this button yet
+            status = TRUE;
+            break;
+        }
+        default:
+        {
+            status = FALSE;  // Event not handled
+            break;
+        }
+    }    
+
+    return status;
+}
+
+//handler for release of the button
+static gboolean on_button_release(GtkWidget *widget, GdkEventButton *event, gpointer user_data) 
+{
+    //variable to hold processing status of the on_button_press
+    char status;
+
+    switch(event->button)
+    {
+        case RIGHT_MOUSE_BUTTON:
+        {  
+            //update flag, user doesn't want to move flag anymore
+            is_dragging = FALSE;  
+            //  Event handled
+            status = TRUE;       
+            break;
+        }
+        case LEFT_MOUSE_BUTTON:
+        {
+            //no function to this button yet,treat event as if was done
+            status = TRUE;
+        }
+        default:
+        {
+            status = FALSE;
+            break;
+        }
     }
-    return FALSE;  // Event not handled
+
+    return status;
 }
 
 //handler for movement on screen
@@ -78,20 +166,12 @@ static gboolean on_motion_notify(GtkWidget *widget, GdkEventMotion *event, gpoin
     return FALSE;  // Event not handled
 }
 
-//handler for release of the button
-static gboolean on_button_release(GtkWidget *widget, GdkEventButton *event, gpointer user_data) {
-    if (event->button == RIGHT_MOUSE_BUTTON) 
-    {  
-        is_dragging = FALSE;
-        return TRUE;  // Event handled
-    }
-    return FALSE;  // Event not handled
-}
-
-
-
 int main(int argc, char *argv[]) 
 {
+    //flag for error handling, true when ok false when error is present
+    //init as true( no error )
+    gboolean error_flag = TRUE;
+
     // Initialize GTK
     gtk_init(&argc, &argv);
 
@@ -105,7 +185,7 @@ int main(int argc, char *argv[])
     gtk_container_add(GTK_CONTAINER(window), grid);
 
     // Create a label for the top text
-    GtkWidget *label = gtk_label_new("Image Display");
+    main_label = gtk_label_new("Image Display");
 
     // Create a button widgets to allow changing image
     GtkWidget *next = gtk_button_new_with_label(">>>");
@@ -113,6 +193,7 @@ int main(int argc, char *argv[])
 
     // Create an image widget
     GtkWidget *image = gtk_image_new_from_file("file_1.png"); // Replace with the path to your image file
+     
 
     //Create a scrolled window
     GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -125,7 +206,7 @@ int main(int argc, char *argv[])
     gtk_container_add(GTK_CONTAINER(scrolled_window), image);
 
     //after creating the widgets add then to the grid at desired positions
-    gtk_grid_attach(GTK_GRID(grid), label,              1, 0, 1, 1); // (column, row, width, height)
+    gtk_grid_attach(GTK_GRID(grid), main_label,         1, 0, 1, 1); // (column, row, width, height)
     gtk_grid_attach(GTK_GRID(grid), next,               2, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(grid), previous,           0, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(grid), scrolled_window,    1, 1, 1, 1);
@@ -142,9 +223,8 @@ int main(int argc, char *argv[])
     gtk_widget_add_events(scrolled_window, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
 //---------------------------------------------------------
 
-
     // Set up a timeout function to update the label text every second (1000 milliseconds)
-    g_timeout_add(1000, update_label, label);
+    g_timeout_add(1000, update_label, main_label);
 
     // Connect the "destroy" signal to quit the GTK main loop
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -157,11 +237,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
-
-
-
-
-
-
-
