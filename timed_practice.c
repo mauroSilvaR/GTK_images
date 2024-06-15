@@ -8,6 +8,10 @@
 #define SCROLL_WHEEL_UP      4
 #define SCROLL_WHEEL_DOWN    5
 
+//defining ZOOM factor to limit range of zoom
+#define ZOOM_FACTOR_MIN 0.3  // TODO: this can be taken by an XML
+#define ZOOM_FACTOR_MAX 10.0 // TODO: this can be taken by an XML
+
 
 // Variables to track the starting position and the initial scroll position
 static gboolean is_dragging = FALSE;
@@ -17,6 +21,14 @@ static int initial_hadjustment = 0, initial_vadjustment = 0;
 
 //main label to be used in the top text
 GtkWidget *main_label;
+
+//structure to hold our application data
+typedef struct 
+{
+    GtkWidget *image;
+    GdkPixbuf *original_pixbuf;
+    double zoom_factor;
+} AppData;
 
 //funtion to print to a label
 // parameters*****
@@ -166,6 +178,53 @@ static gboolean on_motion_notify(GtkWidget *widget, GdkEventMotion *event, gpoin
     return FALSE;  // Event not handled
 }
 
+
+//function to allow zoom in and out on the image
+static void update_image_with_zoom(AppData *app_data) 
+{
+    //get the width and height using standardgdk functions and multiply them by the zoom factor
+    int width = gdk_pixbuf_get_width(app_data->original_pixbuf) * app_data->zoom_factor;
+    int height = gdk_pixbuf_get_height(app_data->original_pixbuf) * app_data->zoom_factor;
+
+    // Ensure width and height are greater than 0
+    if (width > 0 && height > 0) 
+    {
+        GdkPixbuf *scaled_pixbuf = gdk_pixbuf_scale_simple(app_data->original_pixbuf, width, height, GDK_INTERP_BILINEAR);
+        gtk_image_set_from_pixbuf(GTK_IMAGE(app_data->image), scaled_pixbuf);
+        g_object_unref(scaled_pixbuf);
+    }   
+
+}
+
+//signal handler for the keyboard events
+static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer data) 
+{
+    //pass the adress of the g_pointer user data to an AppData pointer
+    AppData *app_data = (AppData *)data;
+
+    //here you can add more events if you'd like
+    // Check for 'z' key (zoom in) or 'm' key (zoom out)
+    if (event->keyval == GDK_KEY_z) 
+    {
+        //changes the zoom factor, increase it by 10%
+        app_data->zoom_factor *= 1.05; // Zoom in
+    }
+    else if (event->keyval == GDK_KEY_m) 
+    {
+        //changes the zoom factor, decrease it by 10%
+        app_data->zoom_factor /= 1.05; // Zoom out
+    }
+
+    //Clamp zoom factor within defined bounds
+    app_data->zoom_factor = MAX(ZOOM_FACTOR_MIN, MIN(ZOOM_FACTOR_MAX, app_data->zoom_factor));
+
+    //apply the zoom function
+    update_image_with_zoom(app_data);
+
+    return TRUE; // Event handled
+}
+
+
 int main(int argc, char *argv[]) 
 {
     //flag for error handling, true when ok false when error is present
@@ -180,6 +239,9 @@ int main(int argc, char *argv[])
     gtk_window_set_title(GTK_WINDOW(window), "Timed_practice");
     gtk_window_set_default_size(GTK_WINDOW(window), 1920, 760);
 
+    //initialize a variable with the struct appdata 
+    AppData app_data;
+
     // Create a grid  container
     GtkWidget *grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(window), grid);
@@ -191,9 +253,20 @@ int main(int argc, char *argv[])
     GtkWidget *next = gtk_button_new_with_label(">>>");
     GtkWidget *previous = gtk_button_new_with_label("<<<");
 
-    // Create an image widget
-    GtkWidget *image = gtk_image_new_from_file("file_1.png"); // Replace with the path to your image file
-     
+    //set a default zoom factor for the image
+    app_data.zoom_factor = 1.0;
+    //load the pixel data of the image using gdk
+    app_data.original_pixbuf = gdk_pixbuf_new_from_file("file_1.png", NULL);
+    //if the data couldn't be loaded display the error
+    if (app_data.original_pixbuf == NULL) 
+    {
+        g_printerr("Error loading image\n");
+        return 1;
+    }
+
+    // Create an image widget with the image from the pix buffer
+    app_data.image = gtk_image_new_from_pixbuf(app_data.original_pixbuf);
+    
 
     //Create a scrolled window
     GtkWidget *scrolled_window = gtk_scrolled_window_new(NULL, NULL);
@@ -202,8 +275,10 @@ int main(int argc, char *argv[])
     // Ensure the scrolled window expands
     gtk_widget_set_hexpand(scrolled_window, TRUE);
     gtk_widget_set_vexpand(scrolled_window, TRUE);
+    //create and capture the focus to allow keyboard events on a scrolled window
+    gtk_widget_set_can_focus(scrolled_window, TRUE);
     // add the image to the scrolled window
-    gtk_container_add(GTK_CONTAINER(scrolled_window), image);
+    gtk_container_add(GTK_CONTAINER(scrolled_window), app_data.image);
 
     //after creating the widgets add then to the grid at desired positions
     gtk_grid_attach(GTK_GRID(grid), main_label,         1, 0, 1, 1); // (column, row, width, height)
@@ -219,9 +294,13 @@ int main(int argc, char *argv[])
     g_signal_connect(scrolled_window, "motion-notify-event", G_CALLBACK(on_motion_notify), scrolled_window);
     g_signal_connect(scrolled_window, "button-release-event", G_CALLBACK(on_button_release), scrolled_window);
 
+    //keyboard events on the scrolled window need have focus to allow keyboard events
+    gtk_widget_grab_focus(scrolled_window);
+    g_signal_connect(scrolled_window, "key-press-event", G_CALLBACK(on_key_press), &app_data);
+
     // Enable mouse events
     gtk_widget_add_events(scrolled_window, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
-//---------------------------------------------------------
+//---------------------------------------------------------------------------------------------------
 
     // Set up a timeout function to update the label text every second (1000 milliseconds)
     g_timeout_add(1000, update_label, main_label);
@@ -235,5 +314,9 @@ int main(int argc, char *argv[])
     // Enter the GTK main loop
     gtk_main();
 
+    g_object_unref(app_data.original_pixbuf);
+
     return 0;
 }
+
+

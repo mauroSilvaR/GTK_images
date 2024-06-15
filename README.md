@@ -1,9 +1,13 @@
 # GTK_images
 Working with images and button events in gtk
 
-Credits for file_1 image:
+Credits for file_1.png image:
 
 "Solar System" by ShinyOgre licensed CC BY-SA 3.0: [https://opengameart.org/node/3009](https://opengameart.org/content/solar-system)
+
+Credits for example_image_jpg:
+Image by Aviavlad on pixabay [https://pixabay.com/pt/photos/electronics-transistor-resistor-3628675/]
+
 
 # How to compile?
 Just open a terminal (CTRL+ALT+T)
