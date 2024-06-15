@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
     //set a default zoom factor for the image
     app_data.zoom_factor = 1.0;
     //load the pixel data of the image using gdk
-    app_data.original_pixbuf = gdk_pixbuf_new_from_file("file_1.png", NULL);
+    app_data.original_pixbuf = gdk_pixbuf_new_from_file("example_image.jpg", NULL);
     //if the data couldn't be loaded display the error
     if (app_data.original_pixbuf == NULL) 
     {
