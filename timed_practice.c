@@ -12,10 +12,17 @@
 #define SCROLL_WHEEL_UP      4
 #define SCROLL_WHEEL_DOWN    5
 
-//defining ZOOM factor to limit range of zoom
-#define ZOOM_FACTOR_MIN 0.3  // TODO: this can be taken by an XML
-#define ZOOM_FACTOR_MAX 10.0 // TODO: this can be taken by an XML
-
+//structure to hold our application data
+typedef struct 
+{
+    GtkWidget *image;
+    GdkPixbuf *original_pixbuf;
+    double zoom_factor;
+    char *background_color;
+    char *window_title ;
+    float max_zoom_factor;
+    float min_zoom_factor;
+} AppData;
 
 // Variables to track the starting position and the initial scroll position
 static gboolean is_dragging = FALSE;
@@ -28,7 +35,7 @@ GtkWidget *main_label;
 
 
 // Function to parse the XML file and extract background color and phrase
-void parse_xml_file(const char *filename, char **background_color, char **phrase) 
+void parse_xml_file(const char *filename, AppData *application) 
 {
     xmlDocPtr doc;
     xmlNodePtr root, node;
@@ -49,11 +56,22 @@ void parse_xml_file(const char *filename, char **background_color, char **phrase
     for (node = root->children; node != NULL; node = node->next) {
         if (xmlStrEqual(node->name, BAD_CAST "background_color")) 
         {
-            *background_color = strdup((char *)xmlNodeGetContent(node));
-        } else if (xmlStrEqual(node->name, BAD_CAST "window_name")) 
+            application->background_color = strdup((char *)xmlNodeGetContent(node));
+        } 
+        else if (xmlStrEqual(node->name, BAD_CAST "window_name")) 
         {
-            *phrase = strdup((char *)xmlNodeGetContent(node));
+            application->window_title = strdup((char *)xmlNodeGetContent(node));
+        } 
+        //added 16/06/2024
+        else if (xmlStrEqual(node->name, BAD_CAST "max_zoom")) 
+        {
+            application->max_zoom_factor = strtof((char *)xmlNodeGetContent(node),NULL);
+        } 
+        else if (xmlStrEqual(node->name, BAD_CAST "min_zoom")) 
+        {
+            application->min_zoom_factor = strtof((char *)xmlNodeGetContent(node),NULL);
         }
+
     }
 
     xmlFreeDoc(doc);
@@ -73,14 +91,6 @@ void set_background_color(GtkWidget *widget, const char *color) {
 
     g_object_unref(provider);
 }
-
-//structure to hold our application data
-typedef struct 
-{
-    GtkWidget *image;
-    GdkPixbuf *original_pixbuf;
-    double zoom_factor;
-} AppData;
 
 //funtion to print to a label
 // parameters*****
@@ -268,7 +278,7 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer dat
     }
 
     //Clamp zoom factor within defined bounds
-    app_data->zoom_factor = MAX(ZOOM_FACTOR_MIN, MIN(ZOOM_FACTOR_MAX, app_data->zoom_factor));
+    app_data->zoom_factor = MAX(app_data->min_zoom_factor, MIN(app_data->max_zoom_factor, app_data->zoom_factor));
 
     //apply the zoom function
     update_image_with_zoom(app_data);
@@ -279,30 +289,26 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer dat
 
 int main(int argc, char *argv[]) 
 {
-    //color for background
-    char *background_color = NULL;
-    //window_title
-    char *window_title = NULL;
+    //initialize a variable with the struct appdata 
+    AppData app_data;
+
 
     // Parse the XML file to get the background color and phrase
-    parse_xml_file("GUI.xml", &background_color, &window_title);
+    parse_xml_file("GUI.xml", &app_data);
 
     // Initialize GTK
     gtk_init(&argc, &argv);
 
     // Create the main window
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), window_title);
+    gtk_window_set_title(GTK_WINDOW(window), app_data.window_title);
     gtk_window_set_default_size(GTK_WINDOW(window), 1920, 760);
 
     // Set the background color if available
-    if (background_color) 
+    if (app_data.background_color) 
     {
-        set_background_color(window, background_color);
+        set_background_color(window, app_data.background_color);
     }
-
-    //initialize a variable with the struct appdata 
-    AppData app_data;
 
     // Create a grid  container
     GtkWidget *grid = gtk_grid_new();

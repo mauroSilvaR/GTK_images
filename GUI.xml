@@ -2,5 +2,8 @@
 <background_color>#111111</background_color>
 <window_name>Timed Practice!</window_name>
 <phrase_color>#00ff00</phrase_color>
-<max_zoom>1.1</max_zoom>
+<max_zoom>10.0</max_zoom>
+<min_zoom>0.3</min_zoom>
 </window>
+
+
