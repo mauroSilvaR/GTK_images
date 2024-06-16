@@ -227,16 +227,13 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer dat
 
 int main(int argc, char *argv[]) 
 {
-    //flag for error handling, true when ok false when error is present
-    //init as true( no error )
-    gboolean error_flag = TRUE;
 
     // Initialize GTK
     gtk_init(&argc, &argv);
 
     // Create the main window
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "Timed_practice");
+    gtk_window_set_title(GTK_WINDOW(window), "Timed Practice");
     gtk_window_set_default_size(GTK_WINDOW(window), 1920, 760);
 
     //initialize a variable with the struct appdata 
