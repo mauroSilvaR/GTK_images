@@ -4,10 +4,10 @@
 CC = gcc
 
 # Flags for compiler
-CFLAGS = -Wall -g $(shell pkg-config --cflags gtk+-3.0)
+CFLAGS = -Wall -g $(shell pkg-config --cflags gtk+-3.0 libxml-2.0)
 
 # Flags for linker
-LDFLAGS = $(shell pkg-config --libs gtk+-3.0)
+LDFLAGS = $(shell pkg-config --libs gtk+-3.0 libxml-2.0)
 
 # Executable name
 TARGET = timed_practice

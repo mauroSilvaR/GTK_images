@@ -1,5 +1,9 @@
 #include <gtk/gtk.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 //definition of mouse events and their specific physhical buttons
 #define LEFT_MOUSE_BUTTON    1
@@ -21,6 +25,54 @@ static int initial_hadjustment = 0, initial_vadjustment = 0;
 
 //main label to be used in the top text
 GtkWidget *main_label;
+
+
+// Function to parse the XML file and extract background color and phrase
+void parse_xml_file(const char *filename, char **background_color, char **phrase) 
+{
+    xmlDocPtr doc;
+    xmlNodePtr root, node;
+
+    doc = xmlParseFile(filename);
+    if (doc == NULL) {
+        fprintf(stderr, "Error: Failed to parse XML file.\n");
+        return;
+    }
+
+    root = xmlDocGetRootElement(doc);
+    if (root == NULL) {
+        fprintf(stderr, "Error: Empty XML file.\n");
+        xmlFreeDoc(doc);
+        return;
+    }
+
+    for (node = root->children; node != NULL; node = node->next) {
+        if (xmlStrEqual(node->name, BAD_CAST "background_color")) 
+        {
+            *background_color = strdup((char *)xmlNodeGetContent(node));
+        } else if (xmlStrEqual(node->name, BAD_CAST "window_name")) 
+        {
+            *phrase = strdup((char *)xmlNodeGetContent(node));
+        }
+    }
+
+    xmlFreeDoc(doc);
+}
+
+// Function to set the background color of a GTK window using CSS
+void set_background_color(GtkWidget *widget, const char *color) {
+    GtkCssProvider *provider = gtk_css_provider_new();
+    GdkDisplay *display = gdk_display_get_default();
+    GdkScreen *screen = gdk_display_get_default_screen(display);
+
+    char css[256];
+    snprintf(css, sizeof(css), "window { background-color: %s; }", color);
+
+    gtk_css_provider_load_from_data(provider, css, -1, NULL);
+    gtk_style_context_add_provider_for_screen(screen, GTK_STYLE_PROVIDER(provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+    g_object_unref(provider);
+}
 
 //structure to hold our application data
 typedef struct 
@@ -227,14 +279,27 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer dat
 
 int main(int argc, char *argv[]) 
 {
+    //color for background
+    char *background_color = NULL;
+    //window_title
+    char *window_title = NULL;
+
+    // Parse the XML file to get the background color and phrase
+    parse_xml_file("GUI.xml", &background_color, &window_title);
 
     // Initialize GTK
     gtk_init(&argc, &argv);
 
     // Create the main window
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "Timed Practice");
+    gtk_window_set_title(GTK_WINDOW(window), window_title);
     gtk_window_set_default_size(GTK_WINDOW(window), 1920, 760);
+
+    // Set the background color if available
+    if (background_color) 
+    {
+        set_background_color(window, background_color);
+    }
 
     //initialize a variable with the struct appdata 
     AppData app_data;
