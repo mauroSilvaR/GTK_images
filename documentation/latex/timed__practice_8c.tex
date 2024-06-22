@@ -1,0 +1,172 @@
+\hypertarget{timed__practice_8c}{}\doxysection{timed\+\_\+practice.\+c File Reference}
+\label{timed__practice_8c}\index{timed\_practice.c@{timed\_practice.c}}
+{\ttfamily \#include $<$gtk/gtk.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$libxml/parser.\+h$>$}\newline
+{\ttfamily \#include $<$libxml/tree.\+h$>$}\newline
+Include dependency graph for timed\+\_\+practice.\+c\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{timed__practice_8c__incl}
+\end{center}
+\end{figure}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structAppData}{App\+Data}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \mbox{\hyperlink{timed__practice_8c_a5b4fc4bb24d4e600730ff30aaaff7323}{L\+E\+F\+T\+\_\+\+M\+O\+U\+S\+E\+\_\+\+B\+U\+T\+T\+ON}}~1
+\item 
+\#define \mbox{\hyperlink{timed__practice_8c_a0f26b1a0dee82337d947288c4ebcee16}{M\+I\+D\+D\+L\+E\+\_\+\+M\+O\+U\+S\+E\+\_\+\+B\+U\+T\+T\+ON}}~2
+\item 
+\#define \mbox{\hyperlink{timed__practice_8c_a752bf1e116b4c25c5543855013c8c6eb}{R\+I\+G\+H\+T\+\_\+\+M\+O\+U\+S\+E\+\_\+\+B\+U\+T\+T\+ON}}~3
+\item 
+\#define \mbox{\hyperlink{timed__practice_8c_ac92983ff74e777aee2b6ee4688f0b73d}{S\+C\+R\+O\+L\+L\+\_\+\+W\+H\+E\+E\+L\+\_\+\+UP}}~4
+\item 
+\#define \mbox{\hyperlink{timed__practice_8c_adc97290e4d1a91064d005cc167e1c805}{S\+C\+R\+O\+L\+L\+\_\+\+W\+H\+E\+E\+L\+\_\+\+D\+O\+WN}}~5
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{timed__practice_8c_a735ef8c7c989b9b7ab6ec1b529e39a5d}{parse\+\_\+xml\+\_\+file}} (const char $\ast$filename, \mbox{\hyperlink{structAppData}{App\+Data}} $\ast$application)
+\begin{DoxyCompactList}\small\item\em Function to parse the X\+ML file and extract background color and phrase. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{timed__practice_8c_a58b53a5b4e0970bb1eca4341f4015b2e}{set\+\_\+background\+\_\+color}} (Gtk\+Widget $\ast$widget, const char $\ast$color)
+\begin{DoxyCompactList}\small\item\em Function to set application background color. \end{DoxyCompactList}\item 
+gboolean \mbox{\hyperlink{timed__practice_8c_a719ac9f18e759200302f72d5eb0ec662}{check\+\_\+if\+\_\+image\+\_\+was\+\_\+loaded}} (Gtk\+Image $\ast$image)
+\begin{DoxyCompactList}\small\item\em function to check if an image was loaded \end{DoxyCompactList}\item 
+gboolean \mbox{\hyperlink{timed__practice_8c_a9718fe110282fe4775ba29317408a32e}{treat\+\_\+right\+\_\+mouse\+\_\+button}} (gpointer user\+\_\+data, Gdk\+Event\+Button $\ast$event)
+\item 
+int \mbox{\hyperlink{timed__practice_8c_a0ddf1224851353fc92bfbff6f499fa97}{main}} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+Gtk\+Widget $\ast$ \mbox{\hyperlink{timed__practice_8c_a805e7d8f44627d811cbbde017e1e1db0}{main\+\_\+label}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Macro Definition Documentation}
+\mbox{\Hypertarget{timed__practice_8c_a5b4fc4bb24d4e600730ff30aaaff7323}\label{timed__practice_8c_a5b4fc4bb24d4e600730ff30aaaff7323}} 
+\index{timed\_practice.c@{timed\_practice.c}!LEFT\_MOUSE\_BUTTON@{LEFT\_MOUSE\_BUTTON}}
+\index{LEFT\_MOUSE\_BUTTON@{LEFT\_MOUSE\_BUTTON}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{LEFT\_MOUSE\_BUTTON}{LEFT\_MOUSE\_BUTTON}}
+{\footnotesize\ttfamily \#define L\+E\+F\+T\+\_\+\+M\+O\+U\+S\+E\+\_\+\+B\+U\+T\+T\+ON~1}
+
+\mbox{\Hypertarget{timed__practice_8c_a0f26b1a0dee82337d947288c4ebcee16}\label{timed__practice_8c_a0f26b1a0dee82337d947288c4ebcee16}} 
+\index{timed\_practice.c@{timed\_practice.c}!MIDDLE\_MOUSE\_BUTTON@{MIDDLE\_MOUSE\_BUTTON}}
+\index{MIDDLE\_MOUSE\_BUTTON@{MIDDLE\_MOUSE\_BUTTON}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{MIDDLE\_MOUSE\_BUTTON}{MIDDLE\_MOUSE\_BUTTON}}
+{\footnotesize\ttfamily \#define M\+I\+D\+D\+L\+E\+\_\+\+M\+O\+U\+S\+E\+\_\+\+B\+U\+T\+T\+ON~2}
+
+\mbox{\Hypertarget{timed__practice_8c_a752bf1e116b4c25c5543855013c8c6eb}\label{timed__practice_8c_a752bf1e116b4c25c5543855013c8c6eb}} 
+\index{timed\_practice.c@{timed\_practice.c}!RIGHT\_MOUSE\_BUTTON@{RIGHT\_MOUSE\_BUTTON}}
+\index{RIGHT\_MOUSE\_BUTTON@{RIGHT\_MOUSE\_BUTTON}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{RIGHT\_MOUSE\_BUTTON}{RIGHT\_MOUSE\_BUTTON}}
+{\footnotesize\ttfamily \#define R\+I\+G\+H\+T\+\_\+\+M\+O\+U\+S\+E\+\_\+\+B\+U\+T\+T\+ON~3}
+
+\mbox{\Hypertarget{timed__practice_8c_adc97290e4d1a91064d005cc167e1c805}\label{timed__practice_8c_adc97290e4d1a91064d005cc167e1c805}} 
+\index{timed\_practice.c@{timed\_practice.c}!SCROLL\_WHEEL\_DOWN@{SCROLL\_WHEEL\_DOWN}}
+\index{SCROLL\_WHEEL\_DOWN@{SCROLL\_WHEEL\_DOWN}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{SCROLL\_WHEEL\_DOWN}{SCROLL\_WHEEL\_DOWN}}
+{\footnotesize\ttfamily \#define S\+C\+R\+O\+L\+L\+\_\+\+W\+H\+E\+E\+L\+\_\+\+D\+O\+WN~5}
+
+\mbox{\Hypertarget{timed__practice_8c_ac92983ff74e777aee2b6ee4688f0b73d}\label{timed__practice_8c_ac92983ff74e777aee2b6ee4688f0b73d}} 
+\index{timed\_practice.c@{timed\_practice.c}!SCROLL\_WHEEL\_UP@{SCROLL\_WHEEL\_UP}}
+\index{SCROLL\_WHEEL\_UP@{SCROLL\_WHEEL\_UP}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{SCROLL\_WHEEL\_UP}{SCROLL\_WHEEL\_UP}}
+{\footnotesize\ttfamily \#define S\+C\+R\+O\+L\+L\+\_\+\+W\+H\+E\+E\+L\+\_\+\+UP~4}
+
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{timed__practice_8c_a719ac9f18e759200302f72d5eb0ec662}\label{timed__practice_8c_a719ac9f18e759200302f72d5eb0ec662}} 
+\index{timed\_practice.c@{timed\_practice.c}!check\_if\_image\_was\_loaded@{check\_if\_image\_was\_loaded}}
+\index{check\_if\_image\_was\_loaded@{check\_if\_image\_was\_loaded}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{check\_if\_image\_was\_loaded()}{check\_if\_image\_was\_loaded()}}
+{\footnotesize\ttfamily gboolean check\+\_\+if\+\_\+image\+\_\+was\+\_\+loaded (\begin{DoxyParamCaption}\item[{Gtk\+Image $\ast$}]{image }\end{DoxyParamCaption})}
+
+
+
+function to check if an image was loaded 
+
+This function receives an image widget and looks at it. If the object is null the image the image was not loaded and the function returns 0,False
+
+
+\begin{DoxyParams}{Parameters}
+{\em image} & The image to be checked \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+gboolean the flag stating it the image was or was\textquotesingle{}nt loaded 
+\end{DoxyReturn}
+\mbox{\Hypertarget{timed__practice_8c_a0ddf1224851353fc92bfbff6f499fa97}\label{timed__practice_8c_a0ddf1224851353fc92bfbff6f499fa97}} 
+\index{timed\_practice.c@{timed\_practice.c}!main@{main}}
+\index{main@{main}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{timed__practice_8c_a735ef8c7c989b9b7ab6ec1b529e39a5d}\label{timed__practice_8c_a735ef8c7c989b9b7ab6ec1b529e39a5d}} 
+\index{timed\_practice.c@{timed\_practice.c}!parse\_xml\_file@{parse\_xml\_file}}
+\index{parse\_xml\_file@{parse\_xml\_file}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{parse\_xml\_file()}{parse\_xml\_file()}}
+{\footnotesize\ttfamily void parse\+\_\+xml\+\_\+file (\begin{DoxyParamCaption}\item[{const char $\ast$}]{filename,  }\item[{\mbox{\hyperlink{structAppData}{App\+Data}} $\ast$}]{application }\end{DoxyParamCaption})}
+
+
+
+Function to parse the X\+ML file and extract background color and phrase. 
+
+This function receives an application structure and a xml file. It parses the X\+ML file searching for relevant information to populate the given structure
+
+
+\begin{DoxyParams}{Parameters}
+{\em filename} & The name of the file (or file path) of the X\+ML file. \\
+\hline
+{\em application} & The application structure that will be populated by the X\+ML file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. The function expects the user to provide the right \mbox{\hyperlink{structAppData}{App\+Data}} to be populated 
+\end{DoxyReturn}
+\mbox{\Hypertarget{timed__practice_8c_a58b53a5b4e0970bb1eca4341f4015b2e}\label{timed__practice_8c_a58b53a5b4e0970bb1eca4341f4015b2e}} 
+\index{timed\_practice.c@{timed\_practice.c}!set\_background\_color@{set\_background\_color}}
+\index{set\_background\_color@{set\_background\_color}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{set\_background\_color()}{set\_background\_color()}}
+{\footnotesize\ttfamily void set\+\_\+background\+\_\+color (\begin{DoxyParamCaption}\item[{Gtk\+Widget $\ast$}]{widget,  }\item[{const char $\ast$}]{color }\end{DoxyParamCaption})}
+
+
+
+Function to set application background color. 
+
+This function receives a window and a color and changes the color of that window using the gtk css provider
+
+
+\begin{DoxyParams}{Parameters}
+{\em color} & Background color that will be set \\
+\hline
+{\em widget} & The widget the function will change the background, usually a window widget \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{timed__practice_8c_a9718fe110282fe4775ba29317408a32e}\label{timed__practice_8c_a9718fe110282fe4775ba29317408a32e}} 
+\index{timed\_practice.c@{timed\_practice.c}!treat\_right\_mouse\_button@{treat\_right\_mouse\_button}}
+\index{treat\_right\_mouse\_button@{treat\_right\_mouse\_button}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{treat\_right\_mouse\_button()}{treat\_right\_mouse\_button()}}
+{\footnotesize\ttfamily gboolean treat\+\_\+right\+\_\+mouse\+\_\+button (\begin{DoxyParamCaption}\item[{gpointer}]{user\+\_\+data,  }\item[{Gdk\+Event\+Button $\ast$}]{event }\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{timed__practice_8c_a805e7d8f44627d811cbbde017e1e1db0}\label{timed__practice_8c_a805e7d8f44627d811cbbde017e1e1db0}} 
+\index{timed\_practice.c@{timed\_practice.c}!main\_label@{main\_label}}
+\index{main\_label@{main\_label}!timed\_practice.c@{timed\_practice.c}}
+\doxysubsubsection{\texorpdfstring{main\_label}{main\_label}}
+{\footnotesize\ttfamily Gtk\+Widget$\ast$ main\+\_\+label}
+

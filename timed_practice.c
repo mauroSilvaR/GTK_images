@@ -34,7 +34,17 @@ static int initial_hadjustment = 0, initial_vadjustment = 0;
 GtkWidget *main_label;
 
 
-// Function to parse the XML file and extract background color and phrase
+
+/**
+ * @brief Function to parse the XML file and extract background color and phrase
+ *
+ * This function receives an application structure and a xml file.
+ * It parses the XML file searching for relevant information to populate the given structure
+ *
+ * @param filename The name of the file (or file path) of the XML file.
+ * @param application The application structure that will be populated by the XML file
+ * @return void. The function expects the user to provide the right AppData to be populated
+ */
 void parse_xml_file(const char *filename, AppData *application) 
 {
     xmlDocPtr doc;
@@ -77,8 +87,19 @@ void parse_xml_file(const char *filename, AppData *application)
     xmlFreeDoc(doc);
 }
 
-// Function to set the background color of a GTK window using CSS
-void set_background_color(GtkWidget *widget, const char *color) {
+
+/**
+ * @brief Function to set application background color
+ *
+ * This function receives a window and a color and changes the color of that window
+ * using the gtk css provider
+ *
+ * @param color Background color that will be set
+ * @param widget The widget the function will change the background, usually a window widget
+ * @return void. 
+ */
+void set_background_color(GtkWidget *widget, const char *color) 
+{
     GtkCssProvider *provider = gtk_css_provider_new();
     GdkDisplay *display = gdk_display_get_default();
     GdkScreen *screen = gdk_display_get_default_screen(display);
@@ -92,19 +113,32 @@ void set_background_color(GtkWidget *widget, const char *color) {
     g_object_unref(provider);
 }
 
-//funtion to print to a label
-// parameters*****
-//data the pointer to the label you want to print
-//char str[250] the string you want to print to that label
+
+/**
+ * @brief funtion to print to a label, usually the main label
+ *
+ * This function receives a label as a widget and a text and prints the text to that label
+ *
+ * @param label That label that the text will be printed on
+ * @param new_text the text that should be printed
+ * @return void. 
+ */
 static void print_to_main_label(GtkLabel *label, const gchar *new_text)
 {
     // Set the label text
     gtk_label_set_text(GTK_LABEL(label), new_text);
 }
 
-//function to check if an image was loaded
-// the function just checks if the widget is null or not, when an image widget is null that indicates no image is present
-// if no image is present after you attempted to load it that means that it wasnt loaded
+
+/**
+ * @brief function to check if an image was loaded
+ *
+ * This function receives an image widget and looks at it. If the object is null the image
+ * the image was not loaded and the function returns 0,False
+ *
+ * @param image The image to be checked
+ * @return gboolean the flag stating it the image was or was'nt loaded
+ */
 gboolean check_if_image_was_loaded(GtkImage *image)
 {
     if(image == NULL)
@@ -119,16 +153,25 @@ gboolean check_if_image_was_loaded(GtkImage *image)
     }
 }
 
-//handler for label text change, TODO: break this down to be a perpetual loop, somewhat like
-// the update functions on frame change in game engines
+/**
+ * @brief handler for gtk timeout
+ *
+ * This function is used by the gtk loop timeout to update the text of the practice time
+ * it performs logic to increase the time count and calls print_to_main_label to update the label
+ * text. It also handles timeout to ensure max_count is kept within limits of the int datatype
+ *
+ * @param data This is a gpointer to the label, it is provided by the gtk timeout function when 
+ *             calling this handler
+ * @return gboolean this is necessary for the timeout to continue otherwise gtk loop wont be continued
+ */
 static gboolean update_label(gpointer data) 
 {
     static int counter = 0;
-    int limit = 100;
+    int max_count = 250;
     char str[250];
 
     counter++;
-    if(counter>= limit)
+    if(counter>= max_count)
     {
         counter = 0;
     }
@@ -137,9 +180,6 @@ static gboolean update_label(gpointer data)
     //only print to the top layer if the image was loaded
     sprintf(str, "New Time: %d",counter);
     print_to_main_label(data,str);
-
-
-
 
     // Return TRUE to continue the timeout
     return TRUE;
@@ -286,7 +326,6 @@ static gboolean on_key_press(GtkWidget *widget, GdkEventKey *event, gpointer dat
     return TRUE; // Event handled
 }
 
-
 int main(int argc, char *argv[]) 
 {
     //initialize a variable with the struct appdata 
@@ -307,7 +346,7 @@ int main(int argc, char *argv[])
     // Set the background color if available
     if (app_data.background_color) 
     {
-        set_background_color(window, app_data.background_color);
+        set_background_color( window , app_data.background_color);
     }
 
     // Create a grid  container
